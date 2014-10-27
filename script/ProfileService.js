@@ -15,7 +15,7 @@ var PROFILESERVICE = (function(ProfileClass) {
 	return {
 		saveProfile: function (profile) {
 			if (profile instanceof ProfileClass) {
-				this.profileStore.push(profile);
+				profileStore.push(profile);
 			}
 		}
 	};

@@ -1,55 +1,66 @@
 <html>
 <head>
+	<link rel="stylesheet" type="text/css" href="script/mypage.css">
 </head>
 <title>My Book</title>
 <body>
 	<form>
 		<center>
-		<table width="80%" height="9%" cellspacing="0" cellpadding="0">
+		<table width="80%" height="10%" cellspacing="0" cellpadding="0">
 			<tr width="100%" height="60%" style="background-color: #086A87;">
 				<td width="10%" />
-				<td width="80%" rowspan="2">
+				<td width="40%" rowspan="2" style="valign: baseline;">
 					<font color="white" size="6" >My Book</font>
 				</td>
+				<td width="40%" />
 				<td width="10%" style="border:none">
 					<input type="button" value="Sign out" onclick="logout();" />
 				</td>
 			</tr>
-			<tr style="background-color: #086A87;" height="40%">
-				<td /><td colspan="2"><font color="white"><label id="error" /></font></td><td />
+			<tr style="background-color: #086A87;" height="10%" ><td colspan="4" /></tr>
+			<tr style="background-color: #086A87;" height="30%">
+				<td /><td /><td colspan="2"><font color="white"><label id="error" /></font></td><td />
 			</tr>
 		</table>
-		<table width="80%" height="86%" cellspacing="0" cellpadding="0">
+		<table width="80%" height="86%" cellspacing="0" cellpadding="0" >
 			<tr class="contentBlock">
 				<td width="100%">
 					<div id="navigator">
-						<div id="lblFeed" class="selectedItem" onclick="displayFeeds(this);">
+						<div id="lblFeed" class="selectedItem" onclick="displayFeeds();">
 							<b>Feed</b>
 						</div><br>
 						<div id="lblProfile" class="unSelectedItem" 
-							 onclick="displayProfile(this);">
+							 onclick="displayProfile();">
 							 <b>Profile</b>
 						</div>
 					</div>
-					<div id="feeds" style="padding:20px">
+					<div id="post" >
 						<input type="text" size="100px" id="feed" placeholder="Text feed or URL feed" />
-						&nbsp;<input type="button" value="Post" onclick="addFeed();"/><br><br>
-						<div style="background-color:#E0F8F7; width: 600px; height: 70px;" > 
-							<img src="person.jpg" alt="book.jpg" height="60" width="70" 
-							style="position: relative; top: 50%; left: 1%; transform: translateY(-50%);" />
-							&nbsp;&nbsp;&nbsp;
-							<label style="position: relative; top: -30%; transform: translateY(-50%);" >
-							URL Feed
-							</label>
-						</div><br>
-						<div style="background-color:#F5F6CE; width: 600px; height: 70px" > 
-							<img src="person.jpg" alt="book.jpg" height="60" width="70" 
-							style="position: relative; top: 50%; left: 1%; transform: translateY(-50%);" />
-							&nbsp;&nbsp;&nbsp;
-							<label style="position: relative; top: -30%; transform: translateY(-50%);" >
-							Text Feed
-							</label>
-						</div>
+						&nbsp;<input type="button" value="Post" onclick="addFeed();"/>
+					</div>
+					
+					<div id="feeds" />
+					<div id="profile" style="align: center; overflow: auto; max-height:80%;">
+					<table cellspacing="10px">
+						<tr cellspacing="50px" cellpadding="50px">
+							<td width="50%">
+							<input type="text" size="50px" id="name" placeholder="Name" />
+							<font color="red">*</font><br><br>
+							<input type="text" size="50px" id="age" placeholder="Age" />
+							<font color="red">*</font><br><br>
+							<input type="text" size="50px" id="phone" placeholder="Phone" />
+							<font color="red">*</font><br><br>
+							<input type="text" size="50px" id="email" placeholder="Email" />
+							<font color="red">*</font><br><br>
+							<textarea rows="5" cols="40" size="50px" id="address" placeholder="Address" ></textarea>
+							<br><br>
+							<input type="file" name="pic" accept="image/*">
+							<br><br>
+							<input type="button" value="Save" />
+							</td>
+							<td width="50%"><img src="book.jpg" alt="book.jpg" height="200" width="200" /></td>
+						</tr>
+					</table>
 					</div>
 				</td>
 			</tr>
@@ -61,38 +72,10 @@
 		</table>
 		</center>
 	</form>  
-<style>
-#navigator {
-    line-height:30px;
-    background-color:#eeeeee;
-    height:590px;
-    width:100px;
-    float:left;
-    padding:5px;
-}
-#feeds {
-    width:800px;
-    float:left;
-    padding:10px;
-	overflow-x:auto;
-	overflow-y:auto;
-}
-.contentBlock {
-	vertical-align: top;
-}
-.selectedItem {
-	background-color: #A4A4A4;
-	height: 45px;
-	cursor: pointer;
-}
-.unSelectedItem {
-	background-color:#eeeeee;
-	height: 30px;
-	cursor: pointer;
-}
-
-</style>
 <script type="text/javascript"src="script/Credential.js" ></script>
+<script type="text/javascript"src="script/FeedService.js" ></script>
+<script type="text/javascript"src="script/ProfileService.js" ></script>
+<script type="text/javascript"src="script/Feed.js" ></script>
 <script> 
 function checkNameLength(name) {
 	if (name.value.length > CREDENTIAL.getUserNameMaxLength()) {
@@ -109,16 +92,76 @@ function logout() {
 
 function addFeed() {
 
+	var feedValue = document.getElementById("feed").value;
+	if (feedValue.length == 0) {
+		document.getElementById('error').innerHTML = "Please enter URL or Text in the feed box...";
+		return;
+	}
+	document.getElementById('error').innerHTML = "";
+	
+	var regex = new RegExp(urlRegEx); // from Feed.js
+	var newFeed;
+	if (feedValue.match(regex) ) {
+		newFeed = new URLFeed(FEEDSERVICE.getFeedId(), 'URL', getTime());
+	} else {
+		newFeed = new TextFeed(FEEDSERVICE.getFeedId(), 'Text', getTime());
+	}
+	newFeed.setFeed(feedValue);
+	FEEDSERVICE.createFeed(newFeed);
+	displayFeeds();
+	document.getElementById("feed").value = "";
 }
 
-function displayFeeds(feedObj) {
-	feedObj.className = "selectedItem";
+// this method will render the feed objects in UI
+function displayFeeds() {
+	document.getElementById("lblFeed").className = "selectedItem";
 	document.getElementById('lblProfile').className = "unSelectedItem";
+	document.getElementById('post').style.display = "inline";
+	document.getElementById('feeds').style.display = "inline";
+	document.getElementById('profile').style.display = "none";
+	
+	var myNode = document.getElementById("feeds");
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.firstChild);
+	}
+
+	var feedContent = "";
+	var feedsList = FEEDSERVICE.getFeeds();
+	for (var i = feedsList.length - 1; i >= 0; i--) {
+
+		if (feedsList[i].getType() == "URL") {
+			feedContent += "<br><div class='urlFeed' ><table width='100%' height='100%'><tr height='70%'><td width='13%'><img src='resource/person.jpg' alt='person.jpg' height='60' width='70' /></td><td width='50%'><a href='" + feedsList[i].getFeed() + "' target='_blank' >" + feedsList[i].getFeed() + "</a>";
+		} else {
+			feedContent += "<br><div class='textFeed' ><table width='100%' height='100%'><tr height='70%'><td width='13%'><img src='resource/person.jpg' alt='person.jpg' height='60' width='70' /></td><td width='50%'><label width='50%' >" + feedsList[i].getFeed() + "</label>";
+		}
+		feedContent += "</td><td width='25%'><label style='position: static;'>" + feedsList[i].getCreatedTime() + "</label></td><td width='10%'><b><label id='" + feedsList[i].getId() + "' onclick='deleteFeed(this.id);' onmouseover=\"document.getElementById('" + feedsList[i].getId() + "').style.color='red'\" onmouseout=\"document.getElementById('" + feedsList[i].getId() + "').style.color='black'\">X</label></b></td></tr></table></div>";
+	}
+	
+	var newDiv = document.createElement("div");
+	newDiv.innerHTML = feedContent;
+	document.getElementById("feeds").appendChild(newDiv); 
 }
 
-function displayProfile(profileObj) {
-	profileObj.className = "selectedItem";
+function displayProfile() {
+	document.getElementById("lblProfile").className = "selectedItem";
 	document.getElementById('lblFeed').className = "unSelectedItem";
+	document.getElementById('post').style.display = "none";
+	document.getElementById('feeds').style.display = "none";
+	document.getElementById('profile').style.display = "inline";
+	alert(document.getElementById('profile').style.display);
+}
+
+function getTime() {
+	var time = new Date();
+	var timeString = time.toLocaleDateString() + " " + time.toLocaleTimeString();
+	timeString = timeString.slice(0, timeString.lastIndexOf(":")) + 
+				 timeString.slice(timeString.lastIndexOf(" "), timeString.length).toLowerCase()
+	return timeString;
+}
+
+function deleteFeed(id) {
+	FEEDSERVICE.deleteFeed(id);
+	displayFeeds();
 }
 </script>
 </body>
