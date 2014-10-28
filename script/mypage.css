@@ -13,6 +13,12 @@
 	overflow:auto;
 	max-height:80%;
 }
+#profileimg {
+	position: relative; 
+	transform: translateY(-25%);
+	height: 220px;
+	width: 200px;
+}
 #post {
     width:800px;
     float:left;
@@ -35,13 +41,13 @@
 .urlFeed {
 	background-color:#E0F8F7; 
 	width: 600px; 
-	height: 70px;
+	height: 80px;
 }
 
 .textFeed {
 	background-color:#F5F6CE; 
 	width: 600px; 
-	height: 70px;
+	height: 80px;
 }
 
 a {
