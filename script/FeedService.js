@@ -1,4 +1,4 @@
-var FEEDSERVICE = (function() {
+var  = (function() {
 "use strict";
 	var feedStore = [];
 	var feedIdCounter = 1;

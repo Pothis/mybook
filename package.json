@@ -1,0 +1,19 @@
+{
+  "name": "MyBook",
+  "version": "1.0.0",
+  "description": "testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pothis/mybook.git"
+  },
+  "author": "Pothis Ram Kumar D",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pothis/mybook/issues"
+  },
+  "homepage": "https://github.com/Pothis/mybook"
+}
